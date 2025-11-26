@@ -1,7 +1,6 @@
 /**
  * This util file contains functions for converting Anthropic messages to LangChain messages.
  */
-import Anthropic from '@anthropic-ai/sdk';
 import {
   AIMessage,
   AIMessageChunk,
@@ -10,10 +9,13 @@ import {
 import type { ToolCallChunk } from '@langchain/core/messages/tool';
 import { ChatGeneration } from '@langchain/core/outputs';
 import { extractToolCalls } from './output_parsers';
-import { AnthropicMessageResponse } from '../types';
+import {
+  AnthropicMessageResponse,
+  AnthropicMessageStreamEvent,
+} from '../types';
 
 export function _makeMessageChunkFromAnthropicEvent(
-  data: Anthropic.Messages.RawMessageStreamEvent,
+  data: AnthropicMessageStreamEvent,
   fields: {
     streamUsage: boolean;
     coerceContentToString: boolean;

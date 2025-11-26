@@ -12,3 +12,4 @@ dist/
 google_auth.json
 credentials/**/*
 .cursor/
+.npm_cache/

@@ -90,6 +90,10 @@ export interface ProcessSourcesConfig {
   filterContent?: boolean;
   reranker?: BaseReranker;
   logger?: Logger;
+  /** Chunk size for text splitting before reranking (default: 500) */
+  chunkSize?: number;
+  /** Chunk overlap for text splitting (default: 50) */
+  chunkOverlap?: number;
 }
 
 export interface FirecrawlConfig {
@@ -164,6 +168,12 @@ export interface SearchToolConfig
   scraperProvider?: ScraperProvider;
   scraperTimeout?: number;
   serperScraperOptions?: SerperScraperConfig;
+  /** Maximum number of sources to scrape (default: 5) */
+  maxSources?: number;
+  /** Chunk size for text splitting before reranking (default: 500) */
+  chunkSize?: number;
+  /** Chunk overlap for text splitting (default: 50) */
+  chunkOverlap?: number;
   onSearchResults?: (
     results: SearchResult,
     runnableConfig?: RunnableConfig

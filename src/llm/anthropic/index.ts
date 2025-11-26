@@ -16,6 +16,7 @@ import type {
   AnthropicStreamUsage,
   AnthropicMessageStartEvent,
   AnthropicMessageDeltaEvent,
+  AnthropicMessageStreamEvent,
 } from '@/llm/anthropic/types';
 import { _makeMessageChunkFromAnthropicEvent } from './utils/message_outputs';
 import { _convertMessagesToAnthropicPayload } from './utils/message_inputs';
@@ -40,7 +41,7 @@ function _documentsInParams(
         block != null &&
         block.type === 'document' &&
         typeof block.citations === 'object' &&
-        block.citations.enabled
+        block.citations?.enabled
       ) {
         return true;
       }
@@ -334,10 +335,13 @@ export class CustomAnthropic extends ChatAnthropicMessages {
         usageMetadata = this.getStreamUsage();
       }
 
-      const result = _makeMessageChunkFromAnthropicEvent(data, {
-        streamUsage: shouldStreamUsage,
-        coerceContentToString,
-      });
+      const result = _makeMessageChunkFromAnthropicEvent(
+        data as AnthropicMessageStreamEvent,
+        {
+          streamUsage: shouldStreamUsage,
+          coerceContentToString,
+        }
+      );
       if (!result) continue;
 
       const { chunk } = result;

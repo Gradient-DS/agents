@@ -31,7 +31,7 @@ const chunker = {
       separators?: string[];
     }
   ): Promise<string[]> => {
-    const chunkSize = options?.chunkSize ?? 150;
+    const chunkSize = options?.chunkSize ?? 500;
     const chunkOverlap = options?.chunkOverlap ?? 50;
     const separators = options?.separators || ['\n\n', '\n'];
 
@@ -82,12 +82,16 @@ const getHighlights = async ({
   content,
   reranker,
   topResults = 5,
+  chunkSize = 500,
+  chunkOverlap = 50,
   logger,
 }: {
   content: string;
   query: string;
   reranker?: BaseReranker;
   topResults?: number;
+  chunkSize?: number;
+  chunkOverlap?: number;
   logger?: t.Logger;
 }): Promise<t.Highlight[] | undefined> => {
   const logger_ = logger || createDefaultLogger();
@@ -102,7 +106,10 @@ const getHighlights = async ({
   }
 
   try {
-    const documents = await chunker.splitText(content);
+    const documents = await chunker.splitText(content, {
+      chunkSize,
+      chunkOverlap,
+    });
     if (Array.isArray(documents)) {
       return await reranker.rerank(query, documents, topResults);
     } else {
@@ -445,6 +452,8 @@ export const createSourceProcessor = (
   }
   const {
     topResults = 5,
+    chunkSize = 500,
+    chunkOverlap = 50,
     // strategies = ['no_extraction'],
     // filterContent = true,
     reranker,
@@ -511,6 +520,9 @@ export const createSourceProcessor = (
                 const highlights = await getHighlights({
                   query,
                   reranker,
+                  topResults,
+                  chunkSize,
+                  chunkOverlap,
                   content: result.content,
                   logger: logger_,
                 });
