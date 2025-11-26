@@ -180,19 +180,21 @@ function createSearchProcessor({
   sourceProcessor,
   onGetHighlights,
   logger,
+  configuredMaxSources = 5,
 }: {
   safeSearch: t.SearchToolConfig['safeSearch'];
   searchAPI: ReturnType<typeof createSearchAPI>;
   sourceProcessor: ReturnType<typeof createSourceProcessor>;
   onGetHighlights: t.SearchToolConfig['onGetHighlights'];
   logger: t.Logger;
+  configuredMaxSources?: number;
 }) {
   return async function ({
     query,
     date,
     country,
     proMode = true,
-    maxSources = 5,
+    maxSources = configuredMaxSources,
     onSearchResults,
     images = false,
     videos = false,
@@ -363,6 +365,9 @@ export const createSearchTool = (
     searxngApiKey,
     rerankerType = 'cohere',
     topResults = 5,
+    maxSources = 5,
+    chunkSize = 500,
+    chunkOverlap = 50,
     strategies = ['no_extraction'],
     filterContent = true,
     safeSearch = 1,
@@ -450,6 +455,8 @@ export const createSearchTool = (
       topResults,
       strategies,
       filterContent,
+      chunkSize,
+      chunkOverlap,
       logger,
     },
     scraperInstance
@@ -461,6 +468,7 @@ export const createSearchTool = (
     sourceProcessor,
     onGetHighlights,
     logger,
+    configuredMaxSources: maxSources,
   });
 
   return createTool({
