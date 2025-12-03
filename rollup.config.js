@@ -76,7 +76,7 @@ export default {
     }),
     json(),
     typescript({
-      tsconfig: isProduction ? './tsconfig.build.json' : './tsconfig.json',
+      tsconfig: './tsconfig.json',
       /* enable source maps for testing with other production options */
       // sourceMap: !isProduction,
       // inlineSources: !isProduction,

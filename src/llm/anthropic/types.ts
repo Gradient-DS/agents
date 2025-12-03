@@ -50,7 +50,7 @@ export type AnthropicWebSearchToolResultBlockParam =
 export type AnthropicWebSearchResultBlockParam =
   Anthropic.Messages.WebSearchResultBlockParam;
 export type AnthropicSearchResultBlockParam =
-  Anthropic.Beta.BetaSearchResultBlockParam;
+  Anthropic.Beta.Messages.BetaSearchResultBlockParam;
 
 // Union of all possible content block types including server tool use
 export type AnthropicContentBlock =
