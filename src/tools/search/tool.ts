@@ -20,6 +20,26 @@ import { createDefaultLogger } from './utils';
 import { createReranker } from './rerankers';
 import { Constants } from '@/common';
 
+// Note: This description is used as the default. It can be overridden via prompts.yml
+// but since createSearchTool must be synchronous (called from sync JS code),
+// the prompt config loading happens at the API layer in handleTools.js instead.
+const DEFAULT_SEARCH_DESCRIPTION = `Real-time search. Results have required citation anchors.
+
+Note: Use ONCE per reply unless instructed otherwise.
+
+**Citation Format:**
+Append bracket citations after cited statements:
+【turnXtypeY】
+- X = turn index (0-based)
+- type = 'search' | 'news' | 'image' | 'ref'
+- Y = item index (0-based)
+
+**CITE EVERY NON-OBVIOUS FACT/QUOTE:**
+- Single source: Pure functions produce same output.【turn0search0】
+- Multiple sources: Today's news confirms this.【turn0search0,turn0news0】
+
+**NEVER use markdown links, [1], or footnotes. CITE ONLY with 【brackets】.**`;
+
 /**
  * Executes parallel searches and merges the results
  */
@@ -269,10 +289,12 @@ function createOnSearchResults({
 function createTool({
   schema,
   search,
+  description,
   onSearchResults: _onSearchResults,
 }: {
   schema: t.SearchToolSchema;
   search: ReturnType<typeof createSearchProcessor>;
+  description: string;
   onSearchResults: t.SearchToolConfig['onSearchResults'];
 }): DynamicStructuredTool<typeof schema> {
   return tool<typeof schema>(
@@ -298,23 +320,7 @@ function createTool({
     },
     {
       name: Constants.WEB_SEARCH,
-      description: `Real-time search. Results have required citation anchors.
-
-Note: Use ONCE per reply unless instructed otherwise.
-
-**Citation Format:**
-Append bracket citations after cited statements:
-【turnXtypeY】
-- X = turn index (0-based)
-- type = 'search' | 'news' | 'image' | 'ref'
-- Y = item index (0-based)
-
-**CITE EVERY NON-OBVIOUS FACT/QUOTE:**
-- Single source: Pure functions produce same output.【turn0search0】
-- Multiple sources: Today's news confirms this.【turn0search0,turn0news0】
-
-**NEVER use markdown links, [1], or footnotes. CITE ONLY with 【brackets】.**
-`.trim(),
+      description: description.trim(),
       schema: schema,
       responseFormat: Constants.CONTENT_AND_ARTIFACT,
     }
@@ -468,6 +474,7 @@ export const createSearchTool = (
   return createTool({
     search,
     schema: toolSchema,
+    description: DEFAULT_SEARCH_DESCRIPTION,
     onSearchResults: _onSearchResults,
   });
 };

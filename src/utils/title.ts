@@ -5,6 +5,7 @@ import type { Runnable, RunnableConfig } from '@langchain/core/runnables';
 import type { AIMessage } from '@langchain/core/messages';
 import type * as t from '@/types';
 import { ContentTypes } from '@/common';
+import { getPrompt } from './prompts';
 
 const defaultTitlePrompt = `Analyze this conversation and provide:
 1. The detected language of the conversation
@@ -41,8 +42,13 @@ export const createTitleRunnable = async (
   /* @ts-ignore */
   const combinedLLM = model.withStructuredOutput(combinedSchema);
 
+  // Load prompt from config if not provided
+  const resolvedTitlePrompt =
+    _titlePrompt ??
+    (await getPrompt(['title', 'defaultPrompt'], defaultTitlePrompt));
+
   const titlePrompt = ChatPromptTemplate.fromTemplate(
-    _titlePrompt ?? defaultTitlePrompt
+    resolvedTitlePrompt
   ).withConfig({ runName: 'TitlePrompt' });
 
   const titleOnlyInnerChain = RunnableSequence.from([titlePrompt, titleLLM]);
@@ -124,8 +130,13 @@ export const createCompletionTitleRunnable = async (
   model: t.ChatModelInstance,
   titlePrompt?: string
 ): Promise<Runnable> => {
+  // Load prompt from config if not provided
+  const resolvedPrompt =
+    titlePrompt ??
+    (await getPrompt(['title', 'completionPrompt'], defaultCompletionPrompt));
+
   const completionPrompt = ChatPromptTemplate.fromTemplate(
-    titlePrompt ?? defaultCompletionPrompt
+    resolvedPrompt
   ).withConfig({ runName: 'CompletionTitlePrompt' });
 
   /** Runnable to extract content from model response */
