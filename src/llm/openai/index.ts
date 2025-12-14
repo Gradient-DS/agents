@@ -334,6 +334,7 @@ export class ChatOpenAI extends OriginalChatOpenAI<t.ChatOpenAICallOptions> {
 
     const streamIterable = await this.completionWithRetry(params, options);
     let usage: OpenAIClient.Completions.CompletionUsage | undefined;
+    let collectedContent = '';
     for await (const data of streamIterable) {
       const choice = data.choices[0] as
         | Partial<OpenAIClient.Chat.Completions.ChatCompletionChunk.Choice>
@@ -348,6 +349,9 @@ export class ChatOpenAI extends OriginalChatOpenAI<t.ChatOpenAICallOptions> {
       const { delta } = choice;
       if (!delta) {
         continue;
+      }
+      if (delta.content) {
+        collectedContent += delta.content;
       }
       const chunk = this._convertOpenAIDeltaToBaseMessageChunk(
         delta,
@@ -406,6 +410,7 @@ export class ChatOpenAI extends OriginalChatOpenAI<t.ChatOpenAICallOptions> {
         { chunk: generationChunk }
       );
     }
+    console.log('[OpenAI LLM Response]', collectedContent);
     if (usage) {
       const inputTokenDetails = {
         ...(usage.prompt_tokens_details?.audio_tokens != null && {

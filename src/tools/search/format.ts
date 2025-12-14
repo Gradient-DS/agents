@@ -20,7 +20,7 @@ function formatSource(
   outputLines.push(
     `# ${sourceType.charAt(0).toUpperCase() + sourceType.slice(1)} ${index}: ${source.title != null && source.title ? `"${source.title}"` : '(no title)'}`
   );
-  outputLines.push(`\nAnchor: \\ue202turn${turn}${sourceType}${index}`);
+  outputLines.push(`\nCite as: 【turn${turn}${sourceType}${index}】`);
   outputLines.push(`URL: ${source.link}`);
 
   // Add optional fields
@@ -90,7 +90,7 @@ function formatSource(
             `- ${ref.type}#${ref.originalIndex + 1}: ${ref.reference.originalUrl}`
           );
           refLines.push(
-            `\t- Anchor: \\ue202turn${turn}ref${references.length - 1}`
+            `\t- Cite as: 【turn${turn}ref${references.length - 1}】`
           );
         }
 
@@ -153,7 +153,7 @@ export function formatResultsForLLM(
   // if (images.length) {
   //   addSection('Image Results');
   //   const imageLines = images.map((img, i) => [
-  //     `Anchor: \ue202turn0image${i}`,
+  //     `Cite as: 【turn0image${i}】`,
   //     `Title: ${img.title ?? '(no title)'}`,
   //     `Image URL: ${img.imageUrl}`,
   //     ''

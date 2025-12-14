@@ -302,24 +302,18 @@ function createTool({
 
 Note: Use ONCE per reply unless instructed otherwise.
 
-Anchors:
-- \\ue202turnXtypeY
-- X = turn idx, type = 'search' | 'news' | 'image' | 'ref', Y = item idx
-
-Special Markers:
-- \\ue203...\\ue204 — highlight start/end of cited text (for Standalone or Group citations)
-- \\ue200...\\ue201 — group block (e.g. \\ue200\\ue202turn0search1\\ue202turn0news2\\ue201)
+**Citation Format:**
+Append bracket citations after cited statements:
+【turnXtypeY】
+- X = turn index (0-based)
+- type = 'search' | 'news' | 'image' | 'ref'
+- Y = item index (0-based)
 
 **CITE EVERY NON-OBVIOUS FACT/QUOTE:**
-Use anchor marker(s) immediately after the statement:
-- Standalone: "Pure functions produce same output. \\ue202turn0search0"
-- Standalone (multiple): "Today's News \\ue202turn0search0\\ue202turn0news0"
-- Highlight: "\\ue203Highlight text.\\ue204\\ue202turn0news1"
-- Group: "Sources. \\ue200\\ue202turn0search0\\ue202turn0news1\\ue201"
-- Group Highlight: "\\ue203Highlight for group.\\ue204 \\ue200\\ue202turn0search0\\ue202turn0news1\\ue201"
-- Image: "See photo \\ue202turn0image0."
+- Single source: Pure functions produce same output.【turn0search0】
+- Multiple sources: Today's news confirms this.【turn0search0,turn0news0】
 
-**NEVER use markdown links, [1], or footnotes. CITE ONLY with anchors provided.**
+**NEVER use markdown links, [1], or footnotes. CITE ONLY with 【brackets】.**
 `.trim(),
       schema: schema,
       responseFormat: Constants.CONTENT_AND_ARTIFACT,
